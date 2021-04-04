@@ -339,7 +339,7 @@ with row2_3:
     st.markdown(str_goals)
 with row2_4:
     total_shots_in_df = df_data_filtered['shots_on_goal'].sum()
-    str_shots = "👟⚽ " + str(total_shots_in_df) + " Shots on Goal"
+    str_shots = "👟⚽ " + str(total_shots_in_df) + " Shots"
     st.markdown(str_shots)
 
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.2, 6.8, .2))
