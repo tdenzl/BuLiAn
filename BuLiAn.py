@@ -104,7 +104,7 @@ def group_measure_by_attribute(aspect,attribute,measure):
             df_return = df_data.groupby([aspect]).sum()            
     
     if(measure == "Mean"):
-        df_return = df_data.groupby([aspect]).mean()*2
+        df_return = df_data.groupby([aspect]).mean()
         
     if(measure == "Median"):
         df_return = df_data.groupby([aspect]).median()
@@ -128,7 +128,6 @@ def group_measure_by_attribute(aspect,attribute,measure):
 #distribution, most common
 #home team # away team # all team
 # most common result
-# farben teams
 
 def plot_x_per_season(attr,measure):
     rc = {'figure.figsize':(8,4.5),
@@ -152,11 +151,11 @@ def plot_x_per_season(attr,measure):
     df_plot = pd.DataFrame()
     df_plot = group_measure_by_attribute("season",attribute,measure)
     ax = sns.barplot(x="aspect", y=attribute, data=df_plot, color = "#b80606")
-    y_str = measure + " " + attr + " " + "per Game"
+    y_str = measure + " " + attr + " " + " per Team"
     if measure == "Absolute":
         y_str = measure + " " + attr
     if measure == "Minimum" or measure == "Maximum":
-        y_str = measure + " " + attr + "in a Game"
+        y_str = measure + " " + attr + " by a Team"
         
     ax.set(xlabel = "Season", ylabel = y_str)
     if measure == "Mean" or attribute in ["distance","pass_ratio","possession","tackle_ratio"]:
@@ -200,11 +199,11 @@ def plot_x_per_matchday(attr,measure):
     df_plot = group_measure_by_attribute("matchday",attribute,measure)
     ax = sns.barplot(x="aspect", y=attribute, data=df_plot.reset_index(), color = "#b80606")
     plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda x, _: int(x)+1))
-    y_str = measure + " " + attr + " " + "per Game"
+    y_str = measure + " " + attr + " per Team"
     if measure == "Absolute":
         y_str = measure + " " + attr
     if measure == "Minimum" or measure == "Maximum":
-        y_str = measure + " " + attr + "in a Game"
+        y_str = measure + " " + attr + " by a Team"
         
     ax.set(xlabel = "Matchday", ylabel = y_str)
     if measure == "Mean" or attribute in ["distance","pass_ratio","possession","tackle_ratio"]:
@@ -387,7 +386,12 @@ with row5_1:
     ### X per Team ###
     st.subheader('Analysis per Team')
     plot_x_per_team_selected = st.selectbox ("Which aspect do you want to analyze for each team?", list(label_attr_dict_teams.keys()))
+with row5_2:
+    st.subheader(' ‎')
     plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze for each team?", types)
+
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
+with row6_1:
     specific_team_colors = st.checkbox("Use team specific color scheme")
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plot_x_per_team(plot_x_per_team_selected, plot_x_per_team_type)
