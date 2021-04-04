@@ -32,17 +32,16 @@ label_attr_dict_teams = {"Goals Scored":"goals","Goals Received":"goals_received
 color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#b50300', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#8c0303', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
 ### Helper Methods ###
 
-def get_unique_seasons(df_data):
-    #returns season in the form "13-14"
-    unique_seasons = np.unique(df_data.season).tolist()
-    return unique_seasons
-
 def get_unique_seasons_modified(df_data):
     #returns unique season list in the form "Season 13/14" for labels
-    unique_seasons = get_unique_seasons(df_data)
+    unique_seasons = np.unique(df_data.season).tolist()
     seasons_modified = []
-    for season in unique_seasons:
-        seasons_modified.append("Season "+season.replace("-","/"))
+    for s,season in enumerate(unique_seasons):
+        if s==0:
+            season = "‏‏‎ ‎‏‏‎ ‎" + season
+        if s==len(unique_seasons)-1:
+            season = season + "‏‏‎ ‎‏‏‎ ‎"
+        seasons_modified.append(season.replace("-","/"))
     return seasons_modified
 
 def get_unique_matchdays(df_data):
@@ -55,9 +54,9 @@ def get_unique_teams(df_data):
 
 def filter_season(df_data):
     df_filtered_season = pd.DataFrame()
-    seasons = get_unique_seasons(df_data) #season list "13-14"
-    start_raw = start_season.replace("/","-").replace("Season ","") #get raw start season "13-14"
-    end_raw = end_season.replace("/","-").replace("Season ","") #get raw end season "19-20"
+    seasons = np.unique(df_data.season).tolist() #season list "13-14"
+    start_raw = start_season.replace("/","-").replace("‏‏‎ ‎‏‏‎ ‎","") #get raw start season "13-14"
+    end_raw = end_season.replace("/","-").replace("‏‏‎ ‎‏‏‎ ‎","") #get raw end season "19-20"
     start_index = seasons.index(start_raw)
     end_index = seasons.index(end_raw)+1
     seasons_selected = seasons[start_index:end_index]
@@ -96,7 +95,7 @@ def stack_home_away_dataframe(df_data):
     return df_total
 
 def group_measure_by_attribute(aspect,attribute,measure):
-    df_data = df_data_filtered_team
+    df_data = df_data_filtered
     df_return = pd.DataFrame()
     if(measure == "Absolute"):
         if(attribute == "pass_ratio" or attribute == "tackle_ratio" or attribute == "possession"):
@@ -286,52 +285,74 @@ def plot_x_per_team(attr,measure): #total #against, #conceived
 ####################
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns((.1, 2, .2, 1, .1))
-row0_1.title('Analyzing Bundesliga Data')
+row0_1.title('BuLiAn - Analyzing Bundesliga Data')
 row0_2.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
-row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
-with row1_1:
+row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
+with row3_1:
     st.markdown("Hello there! Have you ever spent your weekend watching the German Bundesliga and had your friends complain about how 'players definitely used to run more' and how your club 'just won more tackles last season' ? However, you did not want to start an argument because you did not have any stats at hand? Well this simple application containing Bundesliga data from seasons 2013/2014 to season 2019/2020 allows you to discover just that! If you're on a mobile device, I would recommend switching over to landscape for viewing ease.")
-    st.markdown("**First select the data range you want to analyze:** 👇")
-
+    
 #################
 ### SELECTION ###
 #################
 df_stacked = stack_home_away_dataframe(df_database)
 
-row2_spacer1, row2_1, row2_spacer2, row2_2, row2_spacer3  = st.beta_columns((.2, 3.2, .4, 3.2, .2))
-
+st.sidebar.text('')
+st.sidebar.text('')
+st.sidebar.text('')
 ### SEASON RANGE ###
+st.sidebar.markdown("**First select the data range you want to analyze:** 👇")
 unique_seasons = get_unique_seasons_modified(df_database)
-with row2_1: 
-    start_season, end_season = st.select_slider('Select the season range you want to include', unique_seasons, value = ["Season 13/14","Season 19/20"]
-    )
+start_season, end_season = st.sidebar.select_slider('Select the season range you want to include', unique_seasons, value = ["‏‏‎ ‎‏‏‎ ‎13/14","19/20‏‏‎ ‎‏‏‎ ‎"])
 df_data_filtered_season = filter_season(df_stacked)        
-
 
 ### MATCHDAY RANGE ###
 unique_matchdays = get_unique_matchdays(df_data_filtered_season) #min and max matchday
-with row2_2: #matchday range
-    selected_matchdays = st.select_slider('Select the matchday range you want to include', unique_matchdays, value=[min(unique_matchdays),max(unique_matchdays)])
-
+selected_matchdays = st.sidebar.select_slider('Select the matchday range you want to include', unique_matchdays, value=[min(unique_matchdays),max(unique_matchdays)])
 df_data_filtered_matchday = filter_matchday(df_data_filtered_season)        
 
 ### TEAM SELECTION ###
 unique_teams = get_unique_teams(df_data_filtered_matchday)
-row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
-with row3_1:
-    all_teams_selected = st.selectbox('Do you want to focus on more more specific teams? If the answer is yes, please check the box below and then select the specfic team(s) in the new field.', ['Include all available teams','Select teams manually (choose below)'])
-    if all_teams_selected == 'Select teams manually (choose below)':
-        selected_teams = st.multiselect("Select and deselect the teams you would like to include in the analysis? You can clear the current selection by clicking the corresponding button on the right", unique_teams, default = unique_teams)
+all_teams_selected = st.sidebar.selectbox('Do you want to focus on more more specific teams? If the answer is yes, please check the box below and then select the specfic team(s) in the new field.', ['Include all available teams','Select teams manually (choose below)'])
+if all_teams_selected == 'Select teams manually (choose below)':
+    selected_teams = st.sidebar.multiselect("Select and deselect the teams you would like to include in the analysis? You can clear the current selection by clicking the corresponding x-button on the right", unique_teams, default = unique_teams)
+df_data_filtered = filter_teams(df_data_filtered_matchday)        
+### SEE DATA ###
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
+with row6_1:
+    st.subheader("Currently selected data:")
 
-    df_data_filtered_team = filter_teams(df_data_filtered_matchday)        
-    st.text('')
-    see_data = st.beta_expander('Want to see the currently selected raw data first? Click here 👉')
+row2_spacer1, row2_1, row2_spacer2, row2_2, row2_spacer3, row2_3, row2_spacer4, row2_4, row2_spacer5   = st.beta_columns((.2, 1.55, .2, 1.55, .2, 1.55, .2, 1.55, .2))
+with row2_1:
+    unique_games_in_df = df_data_filtered.game_id.nunique()
+    str_games = "🏟️ " + str(unique_games_in_df) + " Matches"
+    st.markdown(str_games)
+with row2_2:
+    unique_teams_in_df = len(np.unique(df_data_filtered.team).tolist())
+    t = " Teams"
+    if(unique_teams_in_df==1):
+        t = " Team"
+    str_teams = "🏃‍♂️ " + str(unique_teams_in_df) + t
+    st.markdown(str_teams)
+with row2_3:
+    total_goals_in_df = df_data_filtered['goals'].sum()
+    str_goals = "🥅 " + str(total_goals_in_df) + " Goals"
+    st.markdown(str_goals)
+with row2_4:
+    total_shots_in_df = df_data_filtered['shots_on_goal'].sum()
+    str_shots = "👟⚽ " + str(total_shots_in_df) + " Shots on Goal"
+    st.markdown(str_shots)
+
+row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.2, 6.8, .2))
+with row3_1:
+    see_data = st.beta_expander('Click here to see the raw data first 👉')
     with see_data:
-        st.dataframe(data=df_data_filtered_team.reset_index(drop=True))
+        st.dataframe(data=df_data_filtered.reset_index(drop=True))
 st.text('')
 
 #st.dataframe(data=df_stacked.reset_index(drop=True))
 #st.dataframe(data=df_data_filtered)
+
+
 
 ################
 ### ANALYSIS ###
