@@ -284,7 +284,7 @@ def plot_x_per_team(attr,measure): #total #against, #conceived
 ####################
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns((.1, 2, .2, 1, .1))
-row0_1.title('BuLiAn - Analyzing Bundesliga Data')
+row0_1.title('BuLiAn - Analyze Bundesliga Data')
 row0_2.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
