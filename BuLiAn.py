@@ -128,6 +128,8 @@ def group_measure_by_attribute(aspect,attribute,measure):
 #distribution, most common
 #home team # away team # all team
 # most common result
+#What was the game with the highest/lowest XYZ
+#correlation 
 
 def plot_x_per_season(attr,measure):
     rc = {'figure.figsize':(8,4.5),
@@ -279,12 +281,38 @@ def plot_x_per_team(attr,measure): #total #against, #conceived
                    textcoords = 'offset points')
     st.pyplot(fig)
 
+def plt_attribute_scatter(aspect1, aspect2):
+    df_plot = df_data_filtered
+    rc = {'figure.figsize':(5,5),
+          'axes.facecolor':'#0e1117',
+          'axes.edgecolor': '#0e1117',
+          'axes.labelcolor': 'white',
+          'figure.facecolor': '#0e1117',
+          'patch.edgecolor': '#0e1117',
+          'text.color': 'white',
+          'xtick.color': 'white',
+          'ytick.color': 'white',
+          'grid.color': 'grey',
+          'font.size' : 8,
+          'axes.labelsize': 12,
+          'xtick.labelsize': 12,
+          'ytick.labelsize': 12}
+    plt.rcParams.update(rc)
+    fig, ax = plt.subplots()
+    asp1 = label_attr_dict_teams[aspect1]
+    asp2 = label_attr_dict_teams[aspect2]
+    ax = sns.regplot(x=asp1, y=asp2, x_jitter=.1, data=df_plot, color = '#f21111')
+    #ax = sns.scatterplot(x=asp1, y=asp2, data=df_plot)
+    #ax = sns.relplot(x=asp1, y=asp2, data=df_plot)
+    ax.set(xlabel = aspect1, ylabel = aspect2)
+    st.pyplot(fig, ax)
+    
 ####################
 ### INTRODUCTION ###
 ####################
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns((.1, 2.5, .2, 1, .1))
-row0_1.title('BuLiAn - Analyze Bundesliga Data')
+row0_1.title('BuLiAn - Bundesliga Analyzer')
 row0_2.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
@@ -369,8 +397,6 @@ with row4_1:
         plot_x_per_season(plot_x_per_season_selected,plot_x_per_season_type)
     else:
         st.warning('Please select at least one team')
-        
-
 with row4_2:
     ### X per Matchday ###
     st.subheader('Analysis per Matchday')
@@ -380,20 +406,38 @@ with row4_2:
         plot_x_per_matchday(plot_x_per_matchday_selected, plot_x_per_matchday_type)
     else:
         st.warning('Please select at least one team')
-    
-row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 3.2, .4, 3.2, .2))
-with row5_1:
-    ### X per Team ###
-    st.subheader('Analysis per Team')
-    plot_x_per_team_selected = st.selectbox ("Which aspect do you want to analyze for each team?", list(label_attr_dict_teams.keys()))
-with row5_2:
-    st.subheader(' ‎')
-    plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze for each team?", types)
 
-row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
-with row6_1:
+row7_spacer1, row7_1, row7_spacer2 = st.beta_columns((.2, 6.8, .2))
+with row7_1:
+    st.subheader('Analysis per Team')
+
+row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 4, 0.2, 2.5, .2))
+with row5_2:
+    ### Select X per Team ###    
+    plot_x_per_team_selected = st.selectbox ("Which aspect do you want to analyze for each team?", list(label_attr_dict_teams.keys()))
+    plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze for each team?", types)
     specific_team_colors = st.checkbox("Use team specific color scheme")
+
+with row5_1:
+    ### Plot X per Team ###
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plot_x_per_team(plot_x_per_team_selected, plot_x_per_team_type)
+    else:
+        st.warning('Please select at least one team')
+
+row8_spacer1, row8_1, row8_spacer2 = st.beta_columns((.2, 6.8, .2))
+with row8_1:
+    st.subheader('Investigate Correlation of Stats')
+
+row6_spacer1, row6_1, row6_spacer2, row6_2, row6_spacer3  = st.beta_columns((.2, 1.5, 0.2, 3.2, .2))
+with row6_1:
+    ### X per Team ###
+    x_axis_aspect1 = st.selectbox ("Which statistic do you want to plot on the x-axis?", list(label_attr_dict_teams.keys()))
+    y_axis_aspect2 = st.selectbox ("Which statistic do you want to plot on the y-axis?", list(label_attr_dict_teams.keys()))
+
+with row6_2:
+    ### X per Team ###
+    if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
+        plt_attribute_scatter(x_axis_aspect1, y_axis_aspect2)
     else:
         st.warning('Please select at least one team')
