@@ -29,7 +29,7 @@ st.set_page_config(layout="wide")
 df_database = pd.read_csv("./data/data_BuLi_13_20_cleaned.csv")
 label_attr_dict = {"Goals":"goals","Halftime Goals":"ht_goals","Shots on Goal":"shots_on_goal","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
 label_attr_dict_teams = {"Goals Scored":"goals","Goals Received":"goals_received","Halftime Goals Scored":"ht_goals","Halftime Goals Received":"halftime_goals_received","Shots on opposing Goal":"shots_on_goal","Shots on own Goal":"shots_on_goal_received","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
-color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#b50300', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#8c0303', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
+color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#8c0303', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#b50300', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
 ### Helper Methods ###
 
 def get_unique_seasons_modified(df_data):
@@ -385,58 +385,69 @@ st.text('')
 ### ANALYSIS ###
 ################
 
-types = ["Absolute","Mean","Median","Maximum","Minimum"]
+types = ["Mean","Absolute","Median","Maximum","Minimum"]
 
-row4_spacer1, row4_1, row4_spacer2, row4_2, row4_spacer3  = st.beta_columns((.2, 3.2, .4, 3.2, .2))
+### TEAM ###
+row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.2, 6.8, .2))
 with row4_1:
-    ### X per Season ###
-    st.subheader('Analysis per Season')
-    plot_x_per_season_selected = st.selectbox ("Which aspect do you want to analyze for each season?", list(label_attr_dict.keys()))
-    plot_x_per_season_type = st.selectbox ("Which measure do you want to analyze for each season?", types)
-    if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
-        plot_x_per_season(plot_x_per_season_selected,plot_x_per_season_type)
-    else:
-        st.warning('Please select at least one team')
-with row4_2:
-    ### X per Matchday ###
-    st.subheader('Analysis per Matchday')
-    plot_x_per_matchday_selected = st.selectbox ("Which aspect do you want to analyze for each matchday?", list(label_attr_dict.keys()))
-    plot_x_per_matchday_type = st.selectbox ("Which measure do you want to analyze for each matchday?", types)
-    if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
-        plot_x_per_matchday(plot_x_per_matchday_selected, plot_x_per_matchday_type)
-    else:
-        st.warning('Please select at least one team')
-
-row7_spacer1, row7_1, row7_spacer2 = st.beta_columns((.2, 6.8, .2))
-with row7_1:
     st.subheader('Analysis per Team')
-
-row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 4, 0.2, 2.5, .2))
-with row5_2:
-    ### Select X per Team ###    
-    plot_x_per_team_selected = st.selectbox ("Which aspect do you want to analyze for each team?", list(label_attr_dict_teams.keys()))
+row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 2.2, 0.2, 4.3, .2))
+with row5_1:
+    st.markdown('Investigate a variety of stats for each team. Which team scores the most goals per game? How does your team compare in terms of distance ran per game?')    
+    plot_x_per_team_selected = st.selectbox ("Which attribute do you want to analyze for each team?", list(label_attr_dict_teams.keys()))
     plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze for each team?", types)
     specific_team_colors = st.checkbox("Use team specific color scheme")
-
-with row5_1:
-    ### Plot X per Team ###
+with row5_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plot_x_per_team(plot_x_per_team_selected, plot_x_per_team_type)
     else:
         st.warning('Please select at least one team')
 
+### SEASON ###
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.2, 6.8, .2))
+with row6_1:
+    st.subheader('Analysis per Season')
+row7_spacer1, row7_1, row7_spacer2, row7_2, row7_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
+with row7_1:
+    st.markdown('Investigate developments and trends. Which season had teams score the most goals? Has the amount of passes per games changed?')    
+    plot_x_per_season_selected = st.selectbox ("Which attribute do you want to analyze for each season?", list(label_attr_dict.keys()))
+    plot_x_per_season_type = st.selectbox ("Which measure do you want to analyze for each season?", types)
+with row7_2:
+    if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
+        plot_x_per_season(plot_x_per_season_selected,plot_x_per_season_type)
+    else:
+        st.warning('Please select at least one team')
+
+### MATCHDAY ###
 row8_spacer1, row8_1, row8_spacer2 = st.beta_columns((.2, 6.8, .2))
 with row8_1:
-    st.subheader('Investigate Correlation of Stats')
+    st.subheader('Analysis per Matchday')
+row9_spacer1, row9_1, row9_spacer2, row9_2, row9_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
+with row9_1:
+    st.markdown('Investigate stats over the course of a season. At what point in the season do teams score the most goals? Do teams run less towards the end of the season?')    
+    plot_x_per_matchday_selected = st.selectbox ("Which aspect do you want to analyze for each matchday?", list(label_attr_dict.keys()))
+    plot_x_per_matchday_type = st.selectbox ("Which measure do you want to analyze for each matchday?", types)
+with row9_2:
+    if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
+        plot_x_per_matchday(plot_x_per_matchday_selected, plot_x_per_matchday_type)
+    else:
+        st.warning('Please select at least one team')
 
-row6_spacer1, row6_1, row6_spacer2, row6_2, row6_spacer3  = st.beta_columns((.2, 1.5, 0.2, 3.2, .2))
-with row6_1:
-    ### X per Team ###
-    x_axis_aspect1 = st.selectbox ("Which statistic do you want to plot on the x-axis?", list(label_attr_dict_teams.keys()))
-    y_axis_aspect2 = st.selectbox ("Which statistic do you want to plot on the y-axis?", list(label_attr_dict_teams.keys()))
 
-with row6_2:
-    ### X per Team ###
+
+### CORRELATION ###
+corr_plot_types = ["Regplot (recommended)","Standard Scatter","Boxplot"]
+
+row10_spacer1, row10_1, row10_spacer2 = st.beta_columns((.2, 6.8, .2))
+with row10_1:
+    st.subheader('Correlation of Stats')
+row11_spacer1, row11_1, row11_spacer2, row11_2, row11_spacer3  = st.beta_columns((.2, 2.2, 0.2, 4.3, .2))
+with row11_1:
+    st.markdown('Investigate the correlation of attributes, but keep in mind correlation does not imply causation. Do teams that run a lot score also score a lot of goals? Do teams that have a lot of shots on the opposing goal also have more corners?')    
+    corr_type = st.selectbox ("What type of correlation plot do you want to see?", corr_plot_types)
+    y_axis_aspect2 = st.selectbox ("Which attribute do you want to plot on the y-axis?", list(label_attr_dict_teams.keys()))
+    x_axis_aspect1 = st.selectbox ("Which attribute do you want to plot on the x-axis?", list(label_attr_dict_teams.keys()))
+with row11_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plt_attribute_scatter(x_axis_aspect1, y_axis_aspect2)
     else:
