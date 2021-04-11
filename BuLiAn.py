@@ -394,8 +394,8 @@ with row4_1:
 row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 2.2, 0.2, 4.3, .2))
 with row5_1:
     st.markdown('Investigate a variety of stats for each team. Which team scores the most goals per game? How does your team compare in terms of distance ran per game?')    
-    plot_x_per_team_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict_teams.keys()))
-    plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze?", types)
+    plot_x_per_team_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict_teams.keys()), key = 'attribute_team')
+    plot_x_per_team_type = st.selectbox ("Which measure do you want to analyze?", types, key = 'measure_team')
     specific_team_colors = st.checkbox("Use team specific color scheme")
 with row5_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
@@ -410,8 +410,8 @@ with row6_1:
 row7_spacer1, row7_1, row7_spacer2, row7_2, row7_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
 with row7_1:
     st.markdown('Investigate developments and trends. Which season had teams score the most goals? Has the amount of passes per games changed?')    
-    plot_x_per_season_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict.keys()))
-    plot_x_per_season_type = st.selectbox ("Which measure do you want to analyze?", types)
+    plot_x_per_season_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict.keys()), key = 'attribute_season')
+    plot_x_per_season_type = st.selectbox ("Which measure do you want to analyze?", types, key = 'measure_season')
 with row7_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plot_x_per_season(plot_x_per_season_selected,plot_x_per_season_type)
@@ -425,8 +425,8 @@ with row8_1:
 row9_spacer1, row9_1, row9_spacer2, row9_2, row9_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
 with row9_1:
     st.markdown('Investigate stats over the course of a season. At what point in the season do teams score the most goals? Do teams run less towards the end of the season?')    
-    plot_x_per_matchday_selected = st.selectbox ("Which aspect do you want to analyze?", list(label_attr_dict.keys()))
-    plot_x_per_matchday_type = st.selectbox ("Which measure do you want to analyze?", types)
+    plot_x_per_matchday_selected = st.selectbox ("Which aspect do you want to analyze?", list(label_attr_dict.keys()), key = 'attribute_matchday')
+    plot_x_per_matchday_type = st.selectbox ("Which measure do you want to analyze?", types, key = 'measure_matchday')
 with row9_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
         plot_x_per_matchday(plot_x_per_matchday_selected, plot_x_per_matchday_type)
