@@ -366,7 +366,7 @@ def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,w
     if(what == "by both teams"):
         string3 = " Over the course of the match both teams recorded " + value + " " + attribute + " together."
         string4 = " This is the " + min_max.lower() +" value for two teams in the currently selected data."
-    if(what == "by a teams"):
+    if(what == "by a team"):
         string3 = " Over the course of the match " + team + " recorded " + value + " " + attribute + "."
         string4 = " This is the " + min_max.lower() +" value for a team in the currently selected data."
     answer = string1 + string2 + string3 + string4
