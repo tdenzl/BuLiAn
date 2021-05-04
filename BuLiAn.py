@@ -1,16 +1,16 @@
-#####################################################################################
-#####################################################################################
-#####################################################################################
+###########################################################################################################
+###########################################################################################################
+###########################################################################################################
 ######## author = Tim Denzler
 ######## insitution = N/A
 ######## website = https://www.linkedin.com/in/tim-denzler/
 ######## version = 1.0
 ######## status = WIP
-######## description = tba
+######## deployed at = https://share.streamlit.io/tdenzl/bulian/main/BuLiAn.py
 ######## layout inspired by https://share.streamlit.io/tylerjrichards/streamlit_goodreads_app/books.py
-#####################################################################################
-#####################################################################################
-#####################################################################################
+###########################################################################################################
+###########################################################################################################
+###########################################################################################################
 
 import streamlit as st
 import numpy as np
@@ -25,7 +25,6 @@ import seaborn as sns
 st.set_page_config(layout="wide")
 
 ### Data Import ###
-
 df_database = pd.read_csv("./data/data_BuLi_13_20_cleaned.csv")
 types = ["Mean","Absolute","Median","Maximum","Minimum"]
 label_attr_dict = {"Goals":"goals","Halftime Goals":"ht_goals","Shots on Goal":"shots_on_goal","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
@@ -33,8 +32,8 @@ label_attr_dict_teams = {"Goals Scored":"goals","Goals Received":"goals_received
 color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#8c0303', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#b50300', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
 label_attr_dict_correlation = {"Goals":"delta_goals", "Halftime Goals":"delta_ht_goals","Shots on Goal":"delta_shots_on_goal","Distance Covered (in km)":"delta_distance","Passes":"delta_total_passes","Pass Sucess Ratio":"delta_pass_ratio","Possession":"delta_possession","Tackle Success Ratio":"delta_tackle_ratio","Fouls":"delta_fouls","Offside":"delta_offside","Corners":"delta_corners"}
 label_fact_dict = {"goals scored":'goals',"halftime goals scored":'ht_goals',"shots on the goal":'shots_on_goal',"distance covered (in km)":'distance',"total passes":'total_passes',"pass ratio":'pass_ratio',"possession ratio":'possession',"successful tackle ratio":'tackle_ratio',"fouls":'fouls',"offsides":'offside',"corners":'corners'}
-### Helper Methods ###
 
+### Helper Methods ###
 def get_unique_seasons_modified(df_data):
     #returns unique season list in the form "Season 13/14" for labels
     unique_seasons = np.unique(df_data.season).tolist()
@@ -136,13 +135,6 @@ def group_measure_by_attribute(aspect,attribute,measure):
 ########################
 ### ANALYSIS METHODS ###
 ########################
-#per game?
-#differences?
-#distribution, most common
-#home team # away team # all team
-# most common result
-#What was the game with the highest/lowest XYZ
-#correlation 
 
 def plot_x_per_season(attr,measure):
     rc = {'figure.figsize':(8,4.5),
@@ -318,8 +310,8 @@ def plt_attribute_correlation(aspect1, aspect2):
         ax = sns.regplot(x=asp1, y=asp2, x_jitter=.1, data=df_plot, color = '#f21111',scatter_kws={"color": "#f21111"},line_kws={"color": "#c2dbfc"})
     if(corr_type=="Standard Scatter Plot"):
         ax = sns.scatterplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
-    if(corr_type=="Violin Plot (High Computation)"):
-        ax = sns.violinplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
+    '''if(corr_type=="Violin Plot (High Computation)"):
+        ax = sns.violinplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')'''
     ax.set(xlabel = aspect1, ylabel = aspect2)
     st.pyplot(fig, ax)
 
@@ -390,7 +382,9 @@ row0_1.title('BuLiAn - Bundesliga Analyzer')
 row0_2.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
-    st.markdown("Hello there! Have you ever spent your weekend watching the German Bundesliga and had your friends complain about how 'players definitely used to run more' and how your club 'just won more tackles last season' ? However, you did not want to start an argument because you did not have any stats at hand? Well this simple application containing Bundesliga data from seasons 2013/2014 to season 2019/2020 allows you to discover just that! If you're on a mobile device, I would recommend switching over to landscape for viewing ease.")
+    st.markdown("Hello there! Have you ever spent your weekend watching the German Bundesliga and had your friends complain about how 'players definitely used to run more' and how your club 'just won more tackles last season' ? However, you did not want to start an argument because you did not have any stats at hand? Well, this simple application containing Bundesliga data from seasons 2013/2014 to season 2019/2020 allows you to discover just that! If you're on a mobile device, I would recommend switching over to landscape for viewing ease.")
+    st.markdown("You can find the source code here: [GitHub BuLiAn Repository](https://github.com/tdenzl/BuLiAn)")
+    st.markdown("If you are interested in how this app was created check out this blog post: [blog post](https://medium.com/)")
     
 #################
 ### SELECTION ###
@@ -563,7 +557,7 @@ with row9_2:
 
 
 ### CORRELATION ###
-corr_plot_types = ["Regression Plot (Recommended)","Standard Scatter Plot","Violin Plot (High Computation)"]
+corr_plot_types = ["Regression Plot (Recommended)","Standard Scatter Plot"] #removed "Violin Plot (High Computation)"
 
 row10_spacer1, row10_1, row10_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row10_1:
