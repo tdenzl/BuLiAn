@@ -366,7 +366,7 @@ def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,w
     if(what == "by both teams in a match"):
         string3 = " Over the course of the match both teams recorded " + value + " " + attribute + " together."
         string4 = " This is the " + min_max.lower() +" value for two teams in the currently selected data."
-    if(what == "by a team in a match"):
+    if(what == "by a teams"):
         string3 = " Over the course of the match " + team + " recorded " + value + " " + attribute + "."
         string4 = " This is the " + min_max.lower() +" value for a team in the currently selected data."
     answer = string1 + string2 + string3 + string4
@@ -465,7 +465,7 @@ with row13_1:
 with row13_2:
     show_me_aspect = st.selectbox ("", list(label_fact_dict.keys()),key = 'what')
 with row13_3:
-    show_me_what = st.selectbox ("", ["by a team in a match", "by both teams in a match", "difference between teams in match"],key = 'one_both_diff')
+    show_me_what = st.selectbox ("", ["by a team", "by both teams in a match", "difference between teams in match"],key = 'one_both_diff')
 row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row14_1:
     return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
