@@ -476,7 +476,7 @@ with row14_1:
     return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
     df_match_result = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)     
 
-row15_spacer1, row15_1, row15_2, row15_3, row15_4, row15_spacer2  = st.beta_columns((1, 1.5, 1.6 ,0.9, 2, 2))
+row15_spacer1, row15_1, row15_2, row15_3, row15_4, row15_spacer2  = st.beta_columns((0.8, 1.5, 1.6 ,1.1, 2, 2))
 
 with row15_1:
     st.subheader(" ‎")
@@ -492,7 +492,7 @@ with row15_3:
 with row15_4:
     st.subheader(str(df_match_result.iloc[1]['team']))
 
-row16_spacer1, row16_1, row16_2, row16_3, row16_4, row16_spacer2  = st.beta_columns((1, 2, 1.5 ,1, 1.5, 2))
+row16_spacer1, row16_1, row16_2, row16_3, row16_4, row16_spacer2  = st.beta_columns((0.8, 2, 1.5 ,1.1, 1.5, 2))
 with row16_1:
     st.markdown("👟 Shots on Goal")
     st.markdown("🏃‍♂️ Distance (in km)")
