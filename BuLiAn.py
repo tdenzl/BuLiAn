@@ -318,10 +318,10 @@ def plt_attribute_correlation(aspect1, aspect2):
 def find_match_game_id(min_max,attribute,what):
     df_find = df_data_filtered
     search_attribute = label_fact_dict[attribute]
-    if(what == "difference between teams in match"):
+    if(what == "difference between teams"):
         search_attribute = "delta_" + label_fact_dict[attribute]
         df_find[search_attribute] = df_find[search_attribute].abs()
-    if(what == "by both teams in a match"):
+    if(what == "by both teams"):
         df_find = df_data_filtered.groupby(['game_id'], as_index=False).sum()
     column = df_find[search_attribute]
     index = 0
@@ -333,7 +333,7 @@ def find_match_game_id(min_max,attribute,what):
     game_id = df_find.at[index, 'game_id']
     value = df_find.at[index,search_attribute]
     team = ""
-    if(what != "by both teams in a match"):
+    if(what != "by both teams"):
         team = df_find.at[index, 'team']
     return_game_id_value_team = [game_id,value,team]
     return return_game_id_value_team
@@ -360,10 +360,10 @@ def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,w
     string4 = ""
     value = str(abs(round(return_game_id_value_team[1],2)))
     team = str(return_game_id_value_team[2])
-    if(what == "difference between teams in match"):
+    if(what == "difference between teams"):
         string3 = " Over the course of the match a difference of " + value + " " + attribute + " was recorded between the teams."
         string4 = " This is the " + min_max.lower() + " difference for two teams in the currently selected data."
-    if(what == "by both teams in a match"):
+    if(what == "by both teams"):
         string3 = " Over the course of the match both teams recorded " + value + " " + attribute + " together."
         string4 = " This is the " + min_max.lower() +" value for two teams in the currently selected data."
     if(what == "by a teams"):
@@ -465,7 +465,7 @@ with row13_1:
 with row13_2:
     show_me_aspect = st.selectbox ("", list(label_fact_dict.keys()),key = 'what')
 with row13_3:
-    show_me_what = st.selectbox ("", ["by a team", "by both teams in a match", "difference between teams in match"],key = 'one_both_diff')
+    show_me_what = st.selectbox ("", ["by a team", "by both teams", "difference between teams"],key = 'one_both_diff')
 row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row14_1:
     return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
