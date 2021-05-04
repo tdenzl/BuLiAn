@@ -27,9 +27,12 @@ st.set_page_config(layout="wide")
 ### Data Import ###
 
 df_database = pd.read_csv("./data/data_BuLi_13_20_cleaned.csv")
+types = ["Mean","Absolute","Median","Maximum","Minimum"]
 label_attr_dict = {"Goals":"goals","Halftime Goals":"ht_goals","Shots on Goal":"shots_on_goal","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
 label_attr_dict_teams = {"Goals Scored":"goals","Goals Received":"goals_received","Halftime Goals Scored":"ht_goals","Halftime Goals Received":"halftime_goals_received","Shots on opposing Goal":"shots_on_goal","Shots on own Goal":"shots_on_goal_received","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
 color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#8c0303', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#b50300', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
+label_attr_dict_correlation = {"Goals":"delta_goals", "Halftime Goals":"delta_ht_goals","Shots on Goal":"delta_shots_on_goal","Distance Covered (in km)":"delta_distance","Passes":"delta_total_passes","Pass Sucess Ratio":"delta_pass_ratio","Possession":"delta_possession","Tackle Success Ratio":"delta_tackle_ratio","Fouls":"delta_fouls","Offside":"delta_offside","Corners":"delta_corners"}
+label_fact_dict = {"goals scored":'goals',"halftime goals scored":'ht_goals',"shots on the goal":'shots_on_goal',"distance covered (in km)":'distance',"total passes":'total_passes',"successful passes":'success_passes',"failed passes":'failed_passes',"pass ratio":'pass_ratio',"possession ratio":'possession',"successful tackle ratio":'tackle_ratio',"fouls":'fouls',"offsides":'offside',"corners":'corners'}
 ### Helper Methods ###
 
 def get_unique_seasons_modified(df_data):
@@ -78,10 +81,19 @@ def filter_teams(df_data):
 
 def stack_home_away_dataframe(df_data):
     df_data["game_id"] = df_data.index + 1
-    column_names = ['distance','total_passes','success_passes','failed_passes','pass_ratio','possession','tackle_ratio','fouls','got_fouled','offside','corners']
-    h_column_names = ['game_id','season','matchday','h_team','h_goals','a_goals','h_ht_goals','a_ht_goals','h_shots_on_goal','a_shots_on_goal']
-    a_column_names = ['game_id','season','matchday','a_team','a_goals','h_goals','a_ht_goals','h_ht_goals','a_shots_on_goal','h_shots_on_goal']
-    column_names_new = ['game_id','season','matchday','location','team','goals','goals_received','ht_goals','ht_goals_received','shots_on_goal','shots_on_goal_received','distance','total_passes','success_passes','failed_passes','pass_ratio','possession','tackle_ratio','fouls','got_fouled','offside','corners']
+    delta_names = ['goals','ht_goals','shots_on_goal','distance','total_passes','pass_ratio','possession','tackle_ratio','fouls','offside','corners']
+    for column in delta_names:
+        h_delta_column = 'h_delta_'+ column
+        a_delta_column = 'a_delta_'+ column
+        h_column = 'h_'+ column
+        a_column = 'a_'+ column
+        df_data[h_delta_column] = df_data[h_column]-df_data[a_column]
+        df_data[a_delta_column] = df_data[a_column]-df_data[h_column]
+    #st.dataframe(data=df_data)
+    column_names = ['distance','total_passes','success_passes','failed_passes','pass_ratio','possession','tackle_ratio','offside','corners','delta_goals','delta_ht_goals','delta_shots_on_goal','delta_distance','delta_total_passes','delta_pass_ratio','delta_possession','delta_tackle_ratio','delta_fouls','delta_offside','delta_corners']
+    h_column_names = ['game_id','season','matchday','h_team','h_goals','a_goals','h_ht_goals','a_ht_goals','h_shots_on_goal','a_shots_on_goal','h_fouls','a_fouls']
+    a_column_names = ['game_id','season','matchday','a_team','a_goals','h_goals','a_ht_goals','h_ht_goals','a_shots_on_goal','h_shots_on_goal','a_fouls','h_fouls']
+    column_names_new = ['game_id','season','matchday','location','team','goals','goals_received','ht_goals','ht_goals_received','shots_on_goal','shots_on_goal_received','fouls','got_fouled','distance','total_passes','success_passes','failed_passes','pass_ratio','possession','tackle_ratio','offside','corners','delta_goals','delta_ht_goals','delta_shots_on_goal','delta_distance','delta_total_passes','delta_pass_ratio','delta_possession','delta_tackle_ratio','delta_fouls','delta_offside','delta_corners']
     for column in column_names: 
         h_column_names.append("h_" + column)
         a_column_names.append("a_" + column)
@@ -92,7 +104,8 @@ def stack_home_away_dataframe(df_data):
     df_home.columns = column_names_new
     df_away.columns = column_names_new
     df_total = df_home.append(df_away, ignore_index=True).sort_values(['game_id','season', 'matchday'], ascending=[True,True, True])
-    return df_total
+    df_total_sorted = df_total[['game_id','season','matchday','location','team','goals','goals_received','delta_goals','ht_goals','ht_goals_received','delta_ht_goals','shots_on_goal','shots_on_goal_received','delta_shots_on_goal','distance','delta_distance','total_passes','delta_total_passes','success_passes','failed_passes','pass_ratio','delta_pass_ratio','possession','delta_possession','tackle_ratio','delta_tackle_ratio','fouls','got_fouled','delta_fouls','offside','delta_offside','corners','delta_corners']]
+    return df_total_sorted
 
 def group_measure_by_attribute(aspect,attribute,measure):
     df_data = df_data_filtered
@@ -281,7 +294,7 @@ def plot_x_per_team(attr,measure): #total #against, #conceived
                    textcoords = 'offset points')
     st.pyplot(fig)
 
-def plt_attribute_scatter(aspect1, aspect2):
+def plt_attribute_correlation(aspect1, aspect2):
     df_plot = df_data_filtered
     rc = {'figure.figsize':(5,5),
           'axes.facecolor':'#0e1117',
@@ -299,13 +312,78 @@ def plt_attribute_scatter(aspect1, aspect2):
           'ytick.labelsize': 12}
     plt.rcParams.update(rc)
     fig, ax = plt.subplots()
-    asp1 = label_attr_dict_teams[aspect1]
-    asp2 = label_attr_dict_teams[aspect2]
-    ax = sns.regplot(x=asp1, y=asp2, x_jitter=.1, data=df_plot, color = '#f21111')
-    #ax = sns.scatterplot(x=asp1, y=asp2, data=df_plot)
-    #ax = sns.relplot(x=asp1, y=asp2, data=df_plot)
+    asp1 = label_attr_dict_correlation[aspect1]
+    asp2 = label_attr_dict_correlation[aspect2]
+    if(corr_type=="Regression Plot (Recommended)"):
+        ax = sns.regplot(x=asp1, y=asp2, x_jitter=.1, data=df_plot, color = '#f21111',scatter_kws={"color": "#f21111"},line_kws={"color": "#c2dbfc"})
+    if(corr_type=="Standard Scatter Plot"):
+        ax = sns.scatterplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
+    if(corr_type=="Violin Plot (High Computation)"):
+        ax = sns.violinplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
     ax.set(xlabel = aspect1, ylabel = aspect2)
     st.pyplot(fig, ax)
+
+def find_match_game_id(min_max,attribute,what):
+    df_find = df_data_filtered
+    search_attribute = label_fact_dict[attribute]
+    if(what == "difference between teams in match"):
+        search_attribute = "delta_" + label_fact_dict[attribute]
+        df_find[search_attribute] = df_find[search_attribute].abs()
+    if(what == "by both teams in a match"):
+        df_find = df_data_filtered.groupby(['game_id'], as_index=False).sum()
+    column = df_find[search_attribute]
+    index = 0
+    if(min_max == "Minimum"):
+        index = column.idxmin()
+    if(min_max == "Maximum"):
+        index = column.idxmax()
+    #st.dataframe(data=df_find)
+    game_id = df_find.at[index, 'game_id']
+    value = df_find.at[index,search_attribute]
+    team = ""
+    if(what != "by both teams in a match"):
+        team = df_find.at[index, 'team']
+    return_game_id_value_team = [game_id,value,team]
+    return return_game_id_value_team
+
+def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,what):
+    game_id = return_game_id_value_team[0]
+    df_match_result = df_data_filtered.loc[df_data_filtered['game_id'] == game_id]
+    season = df_match_result.iloc[0]['season'].replace("-","/")
+    matchday = str(df_match_result.iloc[0]['matchday'])
+    home_team = df_match_result.iloc[0]['team']
+    away_team = df_match_result.iloc[1]['team']
+    goals_home = str(df_match_result.iloc[0]['goals'])
+    goals_away = str(df_match_result.iloc[1]['goals'])
+    goals_home = str(df_match_result.iloc[0]['goals'])    
+    string1 =  "On matchday " + matchday + " of season " + season + " " + home_team + " played against " + away_team + ". "
+    string2 = ""
+    if(goals_home>goals_away):
+        string2 = "The match resulted in a " + goals_home + ":" + goals_away + " (" + str(df_match_result.iloc[0]['ht_goals']) + ":" + str(df_match_result.iloc[1]['ht_goals']) +") win for " + home_team + "."
+    if(goals_home<goals_away):
+        string2 = "The match resulted in a " + goals_home + ":" + goals_away + " (" + str(df_match_result.iloc[0]['ht_goals']) + ":" + str(df_match_result.iloc[1]['ht_goals']) +") loss for " + home_team + "."
+    if(goals_home==goals_away):
+        string2 = "The match resulted in a " + goals_home + ":" + goals_away + " (" + str(df_match_result.iloc[0]['ht_goals']) + ":" + str(df_match_result.iloc[1]['ht_goals']) +") draw. "
+    string3 = ""
+    string4 = ""
+    value = str(abs(round(return_game_id_value_team[1],2)))
+    team = str(return_game_id_value_team[2])
+    if(what == "difference between teams in match"):
+        string3 = " Over the course of the match a difference of " + value + " " + attribute + " was recorded between the teams."
+        string4 = " This is the " + min_max.lower() + " difference for two teams in the currently selected data."
+    if(what == "by both teams in a match"):
+        string3 = " Over the course of the match both teams recorded " + value + " " + attribute + " together."
+        string4 = " This is the " + min_max.lower() +" value for two teams in the currently selected data."
+    if(what == "by a team in a match"):
+        string3 = " Over the course of the match " + team + " recorded " + value + " " + attribute + "."
+        string4 = " This is the " + min_max.lower() +" value for a team in the currently selected data."
+    answer = string1 + string2 + string3 + string4
+    st.markdown(answer)   
+    see_data2 = st.beta_expander('Click here to see the more facts about that match 👉')
+    with see_data2:
+        #tbd
+        a = 1
+    return answer
     
 ####################
 ### INTRODUCTION ###
@@ -313,7 +391,7 @@ def plt_attribute_scatter(aspect1, aspect2):
 
 row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns((.1, 2.3, .1, 1.3, .1))
 row0_1.title('BuLiAn - Bundesliga Analyzer')
-row0_2.subheader('WIP Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
+row0_2.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
     st.markdown("Hello there! Have you ever spent your weekend watching the German Bundesliga and had your friends complain about how 'players definitely used to run more' and how your club 'just won more tackles last season' ? However, you did not want to start an argument because you did not have any stats at hand? Well this simple application containing Bundesliga data from seasons 2013/2014 to season 2019/2020 allows you to discover just that! If you're on a mobile device, I would recommend switching over to landscape for viewing ease.")
@@ -344,11 +422,11 @@ if all_teams_selected == 'Select teams manually (choose below)':
     selected_teams = st.sidebar.multiselect("Select and deselect the teams you would like to include in the analysis? You can clear the current selection by clicking the corresponding x-button on the right", unique_teams, default = unique_teams)
 df_data_filtered = filter_teams(df_data_filtered_matchday)        
 ### SEE DATA ###
-row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row6_1:
     st.subheader("Currently selected data:")
 
-row2_spacer1, row2_1, row2_spacer2, row2_2, row2_spacer3, row2_3, row2_spacer4, row2_4, row2_spacer5   = st.beta_columns((.2, 1.55, .2, 1.55, .2, 1.55, .2, 1.55, .2))
+row2_spacer1, row2_1, row2_spacer2, row2_2, row2_spacer3, row2_3, row2_spacer4, row2_4, row2_spacer5   = st.beta_columns((.2, 1.6, .2, 1.6, .2, 1.6, .2, 1.6, .2))
 with row2_1:
     unique_games_in_df = df_data_filtered.game_id.nunique()
     str_games = "🏟️ " + str(unique_games_in_df) + " Matches"
@@ -369,7 +447,7 @@ with row2_4:
     str_shots = "👟⚽ " + str(total_shots_in_df) + " Shots"
     st.markdown(str_shots)
 
-row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.2, 6.8, .2))
+row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row3_1:
     see_data = st.beta_expander('Click here to see the raw data first 👉')
     with see_data:
@@ -385,13 +463,29 @@ st.text('')
 ### ANALYSIS ###
 ################
 
-types = ["Mean","Absolute","Median","Maximum","Minimum"]
+### DATA EXPLORER ###
+row12_spacer1, row12_1, row12_spacer2 = st.beta_columns((.2, 7.1, .2))
+with row12_1:
+    st.subheader('Match Finder')
+    st.markdown('Show the (or a) match with the...')  
+row13_spacer1, row13_1, row13_spacer2, row13_2, row13_spacer3, row13_3, row13_spacer4   = st.beta_columns((.2, 2.3, .2, 2.3, .2, 2.3, .2))
+with row13_1:
+    show_me_hi_lo = st.selectbox ("", ["Maximum","Minimum"],key = 'hi_lo') 
+with row13_2:
+    show_me_aspect = st.selectbox ("", list(label_fact_dict.keys()),key = 'what')
+with row13_3:
+    show_me_what = st.selectbox ("", ["by a team in a match", "by both teams in a match", "difference between teams in match"],key = 'one_both_diff')
+row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
+with row14_1:
+    return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
+    answer = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)
+        
 
 ### TEAM ###
-row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.2, 6.8, .2))
+row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row4_1:
     st.subheader('Analysis per Team')
-row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 2.2, 0.2, 4.3, .2))
+row5_spacer1, row5_1, row5_spacer2, row5_2, row5_spacer3  = st.beta_columns((.2, 2.3, .4, 4.4, .2))
 with row5_1:
     st.markdown('Investigate a variety of stats for each team. Which team scores the most goals per game? How does your team compare in terms of distance ran per game?')    
     plot_x_per_team_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict_teams.keys()), key = 'attribute_team')
@@ -404,10 +498,10 @@ with row5_2:
         st.warning('Please select at least one team')
 
 ### SEASON ###
-row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.2, 6.8, .2))
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row6_1:
     st.subheader('Analysis per Season')
-row7_spacer1, row7_1, row7_spacer2, row7_2, row7_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
+row7_spacer1, row7_1, row7_spacer2, row7_2, row7_spacer3  = st.beta_columns((.2, 2.3, .4, 4.4, .2))
 with row7_1:
     st.markdown('Investigate developments and trends. Which season had teams score the most goals? Has the amount of passes per games changed?')    
     plot_x_per_season_selected = st.selectbox ("Which attribute do you want to analyze?", list(label_attr_dict.keys()), key = 'attribute_season')
@@ -419,10 +513,10 @@ with row7_2:
         st.warning('Please select at least one team')
 
 ### MATCHDAY ###
-row8_spacer1, row8_1, row8_spacer2 = st.beta_columns((.2, 6.8, .2))
+row8_spacer1, row8_1, row8_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row8_1:
     st.subheader('Analysis per Matchday')
-row9_spacer1, row9_1, row9_spacer2, row9_2, row9_spacer3  = st.beta_columns((.2, 2.2, .4, 4.3, .2))
+row9_spacer1, row9_1, row9_spacer2, row9_2, row9_spacer3  = st.beta_columns((.2, 2.3, .4, 4.4, .2))
 with row9_1:
     st.markdown('Investigate stats over the course of a season. At what point in the season do teams score the most goals? Do teams run less towards the end of the season?')    
     plot_x_per_matchday_selected = st.selectbox ("Which aspect do you want to analyze?", list(label_attr_dict.keys()), key = 'attribute_matchday')
@@ -436,19 +530,22 @@ with row9_2:
 
 
 ### CORRELATION ###
-corr_plot_types = ["Regplot (recommended)","Standard Scatter","Boxplot"]
+corr_plot_types = ["Regression Plot (Recommended)","Standard Scatter Plot","Violin Plot (High Computation)"]
 
-row10_spacer1, row10_1, row10_spacer2 = st.beta_columns((.2, 6.8, .2))
+row10_spacer1, row10_1, row10_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row10_1:
-    st.subheader('Correlation of Stats')
-row11_spacer1, row11_1, row11_spacer2, row11_2, row11_spacer3  = st.beta_columns((.2, 2.2, 0.2, 4.3, .2))
+    st.subheader('Correlation of Game Stats')
+row11_spacer1, row11_1, row11_spacer2, row11_2, row11_spacer3  = st.beta_columns((.2, 2.3, .4, 4.4, .2))
 with row11_1:
-    st.markdown('Investigate the correlation of attributes, but keep in mind correlation does not imply causation. Do teams that run a lot score also score a lot of goals? Do teams that have a lot of shots on the opposing goal also have more corners?')    
+    st.markdown('Investigate the correlation of attributes, but keep in mind correlation does not imply causation. Do teams that run more than their opponents also score more goals? Do teams that have more shots than their opponents have more corners?')    
     corr_type = st.selectbox ("What type of correlation plot do you want to see?", corr_plot_types)
-    y_axis_aspect2 = st.selectbox ("Which attribute do you want on the y-axis?", list(label_attr_dict_teams.keys()))
-    x_axis_aspect1 = st.selectbox ("Which attribute do you want on the x-axis?", list(label_attr_dict_teams.keys()))
+    y_axis_aspect2 = st.selectbox ("Which attribute do you want on the y-axis?", list(label_attr_dict_correlation.keys()))
+    x_axis_aspect1 = st.selectbox ("Which attribute do you want on the x-axis?", list(label_attr_dict_correlation.keys()))
 with row11_2:
     if all_teams_selected != 'Select teams manually (choose below)' or selected_teams:
-        plt_attribute_scatter(x_axis_aspect1, y_axis_aspect2)
+        plt_attribute_correlation(x_axis_aspect1, y_axis_aspect2)
     else:
         st.warning('Please select at least one team')
+
+
+    
