@@ -310,8 +310,8 @@ def plt_attribute_correlation(aspect1, aspect2):
         ax = sns.regplot(x=asp1, y=asp2, x_jitter=.1, data=df_plot, color = '#f21111',scatter_kws={"color": "#f21111"},line_kws={"color": "#c2dbfc"})
     if(corr_type=="Standard Scatter Plot"):
         ax = sns.scatterplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
-    '''if(corr_type=="Violin Plot (High Computation)"):
-        ax = sns.violinplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')'''
+    #if(corr_type=="Violin Plot (High Computation)"):
+    #    ax = sns.violinplot(x=asp1, y=asp2, data=df_plot, color = '#f21111')
     ax.set(xlabel = aspect1, ylabel = aspect2)
     st.pyplot(fig, ax)
 
