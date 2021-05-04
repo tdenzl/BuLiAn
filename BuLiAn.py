@@ -459,55 +459,62 @@ row12_spacer1, row12_1, row12_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row12_1:
     st.subheader('Match Finder')
     st.markdown('Show the (or a) match with the...')  
-row13_spacer1, row13_1, row13_spacer2, row13_2, row13_spacer3, row13_3, row13_spacer4   = st.beta_columns((.2, 2.3, .2, 2.3, .2, 2.3, .2))
-with row13_1:
-    show_me_hi_lo = st.selectbox ("", ["Maximum","Minimum"],key = 'hi_lo') 
-with row13_2:
-    show_me_aspect = st.selectbox ("", list(label_fact_dict.keys()),key = 'what')
-with row13_3:
-    show_me_what = st.selectbox ("", ["by a team", "by both teams", "difference between teams"],key = 'one_both_diff')
-row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
-with row14_1:
-    return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
-    df_match_result = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)     
+if all_teams_selected == 'Include all available teams':
+    row13_spacer1, row13_1, row13_spacer2, row13_2, row13_spacer3, row13_3, row13_spacer4   = st.beta_columns((.2, 2.3, .2, 2.3, .2, 2.3, .2))
+    with row13_1:
+        show_me_hi_lo = st.selectbox ("", ["Maximum","Minimum"],key = 'hi_lo') 
+    with row13_2:
+        show_me_aspect = st.selectbox ("", list(label_fact_dict.keys()),key = 'what')
+    with row13_3:
+        show_me_what = st.selectbox ("", ["by a team", "by both teams", "difference between teams"],key = 'one_both_diff')
+    row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
+    with row14_1:
+        return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
+        df_match_result = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)     
+    row15_spacer1, row15_1, row15_2, row15_3, row15_4, row15_spacer2  = st.beta_columns((0.5, 1.5, 1.5, 1, 2, 0.5))
+    with row15_1:
+        st.subheader(" ‎")
+    with row15_2:
+        st.subheader(str(df_match_result.iloc[0]['team']))
+    with row15_3:
+        end_result = str(df_match_result.iloc[0]['goals']) + " : " +str(df_match_result.iloc[1]['goals'])
+        ht_result = " ‎ ‎( " + str(df_match_result.iloc[0]['ht_goals']) + " : " +str(df_match_result.iloc[1]['ht_goals']) + " )"
+        st.subheader(end_result + " " + ht_result)  
+    with row15_4:
+        st.subheader(str(df_match_result.iloc[1]['team']))
+else:
+    row17_spacer1, row17_1, row17_spacer2 = st.beta_columns((.2, 7.1, .2))
+    with row17_1:
+        st.warning('Unfortunately this analysis is only available if all teams are included')
 
-row15_spacer1, row15_1, row15_2, row15_3, row15_4, row15_spacer2  = st.beta_columns((0.5, 1.5, 1.5, 1, 2, 0.5))
-with row15_1:
-    st.subheader(" ‎")
-with row15_2:
-    st.subheader(str(df_match_result.iloc[0]['team']))
-with row15_3:
-    end_result = str(df_match_result.iloc[0]['goals']) + " : " +str(df_match_result.iloc[1]['goals'])
-    ht_result = " ‎ ‎( " + str(df_match_result.iloc[0]['ht_goals']) + " : " +str(df_match_result.iloc[1]['ht_goals']) + " )"
-    st.subheader(end_result + " " + ht_result)  
-with row15_4:
-    st.subheader(str(df_match_result.iloc[1]['team']))
+if all_teams_selected == 'Include all available teams':
+    row16_spacer1, row16_1, row16_2, row16_3, row16_4, row16_spacer2  = st.beta_columns((0.5, 1.5, 1.5, 1, 2, 0.5))
+    with row16_1:
+        st.markdown("👟 Shots on Goal")
+        st.markdown("🏃‍♂️ Distance (in km)")
+        st.markdown("🔁 Passes")
+        st.markdown("🤹‍♂️ Possession")
+        st.markdown("🤕 Fouls")
+        st.markdown("🚫 Offside")
+        st.markdown("📐 Corners")
+    with row16_2:
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['shots_on_goal']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['distance']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[0]['total_passes']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎ ‎‎"+str(df_match_result.iloc[0]['possession']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['fouls']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['offside']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['corners']))
+    with row16_4:
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['shots_on_goal']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['distance']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[1]['total_passes']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[1]['possession']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['fouls']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['offside']))
+        st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['corners']))
 
-row16_spacer1, row16_1, row16_2, row16_3, row16_4, row16_spacer2  = st.beta_columns((0.5, 1.5, 1.5, 1, 2, 0.5))
-with row16_1:
-    st.markdown("👟 Shots on Goal")
-    st.markdown("🏃‍♂️ Distance (in km)")
-    st.markdown("🔁 Passes")
-    st.markdown("🤹‍♂️ Possession")
-    st.markdown("🤕 Fouls")
-    st.markdown("🚫 Offside")
-    st.markdown("📐 Corners")
-with row16_2:
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['shots_on_goal']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['distance']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[0]['total_passes']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎ ‎‎"+str(df_match_result.iloc[0]['possession']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['fouls']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['offside']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[0]['corners']))
-with row16_4:
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['shots_on_goal']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['distance']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[1]['total_passes']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎‎"+str(df_match_result.iloc[1]['possession']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['fouls']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['offside']))
-    st.markdown(" ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎"+str(df_match_result.iloc[1]['corners']))
+
 
 ### TEAM ###
 row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.2, 7.1, .2))
