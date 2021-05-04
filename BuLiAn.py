@@ -32,7 +32,7 @@ label_attr_dict = {"Goals":"goals","Halftime Goals":"ht_goals","Shots on Goal":"
 label_attr_dict_teams = {"Goals Scored":"goals","Goals Received":"goals_received","Halftime Goals Scored":"ht_goals","Halftime Goals Received":"halftime_goals_received","Shots on opposing Goal":"shots_on_goal","Shots on own Goal":"shots_on_goal_received","Distance Covered (in km)":"distance","Passes":"total_passes", "Successful Passes":"success_passes", "Failed Passes":"failed_passes", "Pass Success Ratio":"pass_ratio", "Ball Possession":"possession", "Tackle Success Ratio":"tackle_ratio", "Fouls Committed":"fouls", "Fouls Received":"got_fouled", "Offsides":"offside", "Corners":"corners"}
 color_dict = {'1. FC Köln': '#fc4744', '1. FC Nürnberg':'#8c0303', '1. FC Union Berlin':'#edd134', '1. FSV Mainz 05':'#fa2323', 'Bayer 04 Leverkusen':'#cf0c0c', 'Bayern München':'#e62222', 'Bor. Mönchengladbach':'#1f9900', 'Borussia Dortmund':'#fff830', 'Eintracht Braunschweig':'#dbca12', 'Eintracht Frankfurt':'#d10606', 'FC Augsburg':'#007512', 'FC Ingolstadt 04':'#b50300', 'FC Schalke 04':'#1c2afc', 'Fortuna Düsseldorf':'#eb3838', 'Hamburger SV':'#061fc2', 'Hannover 96':'#127a18', 'Hertha BSC':'#005ac2', 'RB Leipzig':'#0707a8', 'SC Freiburg':'#d1332e', 'SC Paderborn 07':'#0546b5', 'SV Darmstadt 98':'#265ade', 'TSG Hoffenheim':'#2b82d9', 'VfB Stuttgart':'#f57171', 'VfL Wolfsburg':'#38d433', 'Werder Bremen':'#10a30b'}
 label_attr_dict_correlation = {"Goals":"delta_goals", "Halftime Goals":"delta_ht_goals","Shots on Goal":"delta_shots_on_goal","Distance Covered (in km)":"delta_distance","Passes":"delta_total_passes","Pass Sucess Ratio":"delta_pass_ratio","Possession":"delta_possession","Tackle Success Ratio":"delta_tackle_ratio","Fouls":"delta_fouls","Offside":"delta_offside","Corners":"delta_corners"}
-label_fact_dict = {"goals scored":'goals',"halftime goals scored":'ht_goals',"shots on the goal":'shots_on_goal',"distance covered (in km)":'distance',"total passes":'total_passes',"successful passes":'success_passes',"failed passes":'failed_passes',"pass ratio":'pass_ratio',"possession ratio":'possession',"successful tackle ratio":'tackle_ratio',"fouls":'fouls',"offsides":'offside',"corners":'corners'}
+label_fact_dict = {"goals scored":'goals',"halftime goals scored":'ht_goals',"shots on the goal":'shots_on_goal',"distance covered (in km)":'distance',"total passes":'total_passes',"pass ratio":'pass_ratio',"possession ratio":'possession',"successful tackle ratio":'tackle_ratio',"fouls":'fouls',"offsides":'offside',"corners":'corners'}
 ### Helper Methods ###
 
 def get_unique_seasons_modified(df_data):
@@ -378,12 +378,8 @@ def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,w
         string3 = " Over the course of the match " + team + " recorded " + value + " " + attribute + "."
         string4 = " This is the " + min_max.lower() +" value for a team in the currently selected data."
     answer = string1 + string2 + string3 + string4
-    st.markdown(answer)   
-    see_data2 = st.beta_expander('Click here to see the more facts about that match 👉')
-    with see_data2:
-        #tbd
-        a = 1
-    return answer
+    st.markdown(answer)
+    return df_match_result
     
 ####################
 ### INTRODUCTION ###
@@ -478,8 +474,51 @@ with row13_3:
 row14_spacer1, row14_1, row14_spacer2 = st.beta_columns((.2, 7.1, .2))
 with row14_1:
     return_game_id_value_team = find_match_game_id(show_me_hi_lo,show_me_aspect,show_me_what)
-    answer = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)
-        
+    df_match_result = build_matchfacts_return_string(return_game_id_value_team,show_me_hi_lo,show_me_aspect,show_me_what)     
+
+row15_spacer1, row15_1, row15_2, row15_3, row15_4, row15_spacer2  = st.beta_columns((1, 1.5, 1.6 ,0.9, 2, 2))
+
+with row15_1:
+    st.subheader(" ‎")
+
+with row15_2:
+    st.subheader(str(df_match_result.iloc[0]['team']))
+
+with row15_3:
+    end_result = str(df_match_result.iloc[0]['goals']) + " : " +str(df_match_result.iloc[1]['goals'])
+    ht_result = "(" + str(df_match_result.iloc[0]['ht_goals']) + " : " +str(df_match_result.iloc[1]['ht_goals']) + ")"
+    st.subheader(end_result + " " + ht_result)
+    
+with row15_4:
+    st.subheader(str(df_match_result.iloc[1]['team']))
+
+row16_spacer1, row16_1, row16_2, row16_3, row16_4, row16_spacer2  = st.beta_columns((1, 2, 1.5 ,1, 1.5, 2))
+with row16_1:
+    st.markdown("👟 Shots on Goal")
+    st.markdown("🏃‍♂️ Distance (in km)")
+    st.markdown("🔁 Passes")
+    st.markdown("🤹‍♂️ Possession")
+    st.markdown("🤕 Fouls")
+    st.markdown("🚫 Offside")
+    st.markdown("📐 Corners")
+
+with row16_2:
+    st.markdown(str(df_match_result.iloc[0]['shots_on_goal']))
+    st.markdown(str(df_match_result.iloc[0]['distance']))
+    st.markdown(str(df_match_result.iloc[0]['total_passes']))
+    st.markdown(str(df_match_result.iloc[0]['possession']))
+    st.markdown(str(df_match_result.iloc[0]['fouls']))
+    st.markdown(str(df_match_result.iloc[0]['offside']))
+    st.markdown(str(df_match_result.iloc[0]['corners']))
+
+with row16_4:
+    st.markdown(str(df_match_result.iloc[1]['shots_on_goal']))
+    st.markdown(str(df_match_result.iloc[1]['distance']))
+    st.markdown(str(df_match_result.iloc[1]['total_passes']))
+    st.markdown(str(df_match_result.iloc[1]['possession']))
+    st.markdown(str(df_match_result.iloc[1]['fouls']))
+    st.markdown(str(df_match_result.iloc[1]['offside']))
+    st.markdown(str(df_match_result.iloc[1]['corners']))
 
 ### TEAM ###
 row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.2, 7.1, .2))
