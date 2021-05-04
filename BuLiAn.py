@@ -381,6 +381,7 @@ row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns((.1, 
 with row0_1:
     st.title('BuLiAn - Bundesliga Analyzer')
 with row0_2:
+    st.subheader("")
     st.subheader('Streamlit App by [Tim Denzler](https://www.linkedin.com/in/tim-denzler/)')
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
