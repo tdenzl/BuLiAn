@@ -3,10 +3,10 @@
 This repository conatains a Python Streamlit application for analyzing Bundesliga data, as well as Jupyter Notebooks for scraping and cleaning the data.
 
 ## Deployed App
-Click here to get to the [deployed BuLiAn web app](https://share.streamlit.io/tdenzl/bulian/main/BuLiAn.py)
+Click here to get to the deployed [BuLiAn web app](https://share.streamlit.io/tdenzl/bulian/main/BuLiAn.py)
 
 ## Medium Article
-Make sure to also check out the [accompanying Medium article]()
+Make sure to also check out the accompanying [Medium article](https://tim-denzler.medium.com/is-bayern-m%C3%BCnchen-the-laziest-team-in-the-german-bundesliga-770cfbd989c7)
 
 ## Current Data Scope
 * :trophy: Season 2013/2014 to Season 2019/2020
