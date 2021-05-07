@@ -361,13 +361,13 @@ def build_matchfacts_return_string(return_game_id_value_team,min_max,attribute,w
     value = str(abs(round(return_game_id_value_team[1],2)))
     team = str(return_game_id_value_team[2])
     if(what == "difference between teams"):
-        string3 = " Over the course of the match a difference of " + value + " " + attribute + " was recorded between the teams."
+        string3 = " Over the course of the match, a difference of " + value + " " + attribute + " was recorded between the teams."
         string4 = " This is the " + min_max.lower() + " difference for two teams in the currently selected data."
     if(what == "by both teams"):
-        string3 = " Over the course of the match both teams recorded " + value + " " + attribute + " together."
+        string3 = " Over the course of the match, both teams recorded " + value + " " + attribute + " together."
         string4 = " This is the " + min_max.lower() +" value for two teams in the currently selected data."
     if(what == "by a team"):
-        string3 = " Over the course of the match " + team + " recorded " + value + " " + attribute + "."
+        string3 = " Over the course of the match, " + team + " recorded " + value + " " + attribute + "."
         string4 = " This is the " + min_max.lower() +" value for a team in the currently selected data."
     answer = string1 + string2 + string3 + string4
     st.markdown(answer)
@@ -386,8 +386,8 @@ with row0_2:
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
     st.markdown("Hello there! Have you ever spent your weekend watching the German Bundesliga and had your friends complain about how 'players definitely used to run more' ? However, you did not want to start an argument because you did not have any stats at hand? Well, this interactive application containing Bundesliga data from season 2013/2014 to season 2019/2020 allows you to discover just that! If you're on a mobile device, I would recommend switching over to landscape for viewing ease.")
-    st.markdown("You can find the source code here: [GitHub BuLiAn Repository](https://github.com/tdenzl/BuLiAn)")
-    st.markdown("If you are interested in how this app was created check out this blog post: [blog post](https://medium.com/)")
+    st.markdown("You can find the source code in the [GitHub BuLiAn Repository](https://github.com/tdenzl/BuLiAn)")
+    st.markdown("If you are interested in how this app was developed check out my [Medium article](https://tim-denzler.medium.com/is-bayern-m%C3%BCnchen-the-laziest-team-in-the-german-bundesliga-770cfbd989c7)")
     
 #################
 ### SELECTION ###
@@ -412,7 +412,7 @@ df_data_filtered_matchday = filter_matchday(df_data_filtered_season)
 unique_teams = get_unique_teams(df_data_filtered_matchday)
 all_teams_selected = st.sidebar.selectbox('Do you want to only include specific teams? If the answer is yes, please check the box below and then select the team(s) in the new field.', ['Include all available teams','Select teams manually (choose below)'])
 if all_teams_selected == 'Select teams manually (choose below)':
-    selected_teams = st.sidebar.multiselect("Select and deselect the teams you would like to include in the analysis? You can clear the current selection by clicking the corresponding x-button on the right", unique_teams, default = unique_teams)
+    selected_teams = st.sidebar.multiselect("Select and deselect the teams you would like to include in the analysis. You can clear the current selection by clicking the corresponding x-button on the right", unique_teams, default = unique_teams)
 df_data_filtered = filter_teams(df_data_filtered_matchday)        
 ### SEE DATA ###
 row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.2, 7.1, .2))
