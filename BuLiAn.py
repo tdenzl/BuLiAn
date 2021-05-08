@@ -585,5 +585,8 @@ with row11_2:
     else:
         st.warning('Please select at least one team')
 
-
+for variable in dir():
+    if variable[0:2] != "__":
+        del globals()[variable]
+del variable
     
