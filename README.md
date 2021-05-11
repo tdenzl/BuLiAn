@@ -13,7 +13,7 @@ Make sure to also check out the accompanying [Medium article](https://tim-denzle
 * 🏟️ 2,142 Matches
 * 🏃‍♂️ 25 Teams
 * 🥅 6,363 Goals
-* 👟⚽ 56036 Shots
+* 👟⚽ 56,036 Shots
 
 ## Repository Structure
 | Folder/Code | Content |
