@@ -443,7 +443,7 @@ with row2_4:
 row3_spacer1, row3_1, row3_spacer2 = st.columns((.2, 7.1, .2))
 with row3_1:
     st.markdown("")
-    see_data = st.beta_expander('You can click here to see the raw data first 👉')
+    see_data = st.expander('You can click here to see the raw data first 👉')
     with see_data:
         st.dataframe(data=df_data_filtered.reset_index(drop=True))
 st.text('')
